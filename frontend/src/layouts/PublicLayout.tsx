@@ -1,0 +1,23 @@
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import LoadingPage from "@/pages/LoadingPage";
+
+const PublicLayout = () => {
+  const { data: user, isLoading, isError } = useAuth();
+
+  if (isLoading) return <LoadingPage />;
+  // Redirect to private if already authenticated
+  if (!!user && !isError) {
+    return <Navigate to="/homePage" replace />;
+  }
+
+  return (
+    <>
+      <div>
+        <Outlet />
+      </div>
+    </>
+  );
+};
+
+export default PublicLayout;
