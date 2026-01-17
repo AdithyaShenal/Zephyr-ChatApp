@@ -1,36 +1,20 @@
 # Zephyr Chat Application
 
-**Real-time Chat Application | React 19 + TSX Backend | Dockerized**
+**Real-time Chat Application | React 19 + TypeScript-based Node.js + Socket.io| Dockerized | Github actions | AWS**
 
 ---
 
 ## Overview
 
-WindTalk is a modern chat application built for real-time communication. It features:
+Zephyr is a modern chat application built for real-time communication. It features:
 
 - **Frontend:** React 19 with TypeScript
-- **Backend:** Node.js with TypeScript (TSX)
+- **Backend:** TypeScript-based Node.js API (powered by tsx for seamless execution) + Socket.io
+- **Database:** Monogo DB
 - **Architecture:** Multi-container Docker setup
 - **Purpose:** Showcase full-stack development skills and containerized deployment
 
 This project is structured as a **monorepo**, making it easy to manage both frontend and backend in a single repository.
-
----
-
-## Repo Structure
-
-WindTalk/
-├─ frontend/ # React 19 frontend
-│ ├─ src/
-│ ├─ package.json
-│ └─ Dockerfile
-├─ backend/ # TSX backend (Node.js + TypeScript)
-│ ├─ src/
-│ ├─ package.json
-│ └─ Dockerfile
-├─ docker-compose.yml # Multi-container orchestration
-└─ README.md
-
 
 ---
 
@@ -57,5 +41,5 @@ WindTalk/
 
 1. Clone the repo:
 ```bash
-git clone https://github.com/<your-username>/WindTalk.git
-cd WindTalk
+git clone https://github.com/<your-username>/Zephyr.git
+cd Zephyr
