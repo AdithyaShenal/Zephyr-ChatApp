@@ -26,6 +26,7 @@ const SentRequestCard = ({ cardProps }: Props) => {
           <ItemMedia>
             <Avatar className="size-10">
               <AvatarImage
+                className="object-cover"
                 src={cardProps.recipient.profilePic || userProfileAlter}
               />
               <AvatarFallback>ER</AvatarFallback>

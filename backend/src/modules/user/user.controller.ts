@@ -10,7 +10,7 @@ export const me = async (req: Request, res: Response) => {
 
   const cached = await redis.cacheGet(`user:${userId}`);
   if (cached) {
-    console.log("Cache Hit!");
+    console.log("Cache Hit -> user");
     return success(res, cached);
   }
 

@@ -4,15 +4,15 @@ import useLogout from "@/hooks/useLogout";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import userProfileAlter from "../../assets/userProfile.png";
-import { useTheme } from "../Theme/theme-provider";
-import { Moon, Sun } from "lucide-react";
+// import { useTheme } from "../Theme/theme-provider";
+// import { Moon, Sun } from "lucide-react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 
 import {
   Dialog,
@@ -40,7 +40,7 @@ function NavBar() {
   const { mutate: logOut } = useLogout();
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const { setTheme } = useTheme();
+  // const { setTheme } = useTheme();
 
   return (
     <>
@@ -78,7 +78,7 @@ function NavBar() {
 
         <div className="flex items-center gap-4">
           <Dialog>
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                   <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
@@ -97,7 +97,12 @@ function NavBar() {
                   System
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
+
+            <div className="flex gap-2 justify-center items-center border p-2 rounded-md">
+              <p className="font-bold text-xs">Online</p>
+              <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+            </div>
 
             <Menubar className="border-none bg-transparent">
               <MenubarMenu>
@@ -117,9 +122,9 @@ function NavBar() {
                       <UserPen className="mr-2 size-4" />
                       Profile
                     </MenubarItem>
-                    <MenubarItem>
+                    <MenubarItem onClick={() => navigate("/aboutPage")}>
                       <HelpCircleIcon className="mr-2 size-4" />
-                      Help
+                      About
                     </MenubarItem>
                     <MenubarSeparator />
                     <DialogTrigger asChild>

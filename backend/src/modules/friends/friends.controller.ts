@@ -10,6 +10,7 @@ import { getReceiversSocketId, io } from "../../lib/socket.js";
 import { success } from "../../utils/response.js";
 import User from "../user/user.model.js";
 import { Types } from "mongoose";
+import * as redis from "../../lib/cache.js";
 
 // Sending a Request ---
 export const sendingRequest = async (req: Request, res: Response) => {
@@ -55,16 +56,13 @@ export const sendingRequest = async (req: Request, res: Response) => {
     "fullName email profilePic lastSeen createdAt",
   );
 
-  const receiverSocketId = getReceiversSocketId(recipientId);
-  console.log("Recipient ID: ", recipientId);
-  console.log("Receiver Socket ID: ", receiverSocketId);
-  console.log("Populated Friend Data: ", populatedFriend);
+  await redis.cacheDel(`user:${userId}:sent:requests`);
+  await redis.cacheDel(`user:${recipientId}:incoming:requests`);
 
+  // Emit via socket
+  const receiverSocketId = getReceiversSocketId(recipientId);
   if (receiverSocketId) {
-    console.log("✅ Emitting newFriendRequest to socket:", receiverSocketId);
     io.to(receiverSocketId).emit("newFriendRequest", populatedFriend);
-  } else {
-    console.log("❌ Receiver is offline or socket not found");
   }
 
   success(res, newFriend);
@@ -102,6 +100,12 @@ export const acceptingRequest = async (req: Request, res: Response) => {
 
   const user = await User.findById(userId);
 
+  // Invalidate cache in case of adding new friend
+  await redis.cacheDel(`user:${friendRequest.requester}:friends`);
+  await redis.cacheDel(`user:${userId}:friends`);
+  await redis.cacheDel(`user:${friendRequest.requester}:sent:requests`);
+  await redis.cacheDel(`user:${userId}:incoming:requests`);
+
   // Send via Socket io
   const receiverSocketId = getReceiversSocketId(
     String(friendRequest.requester),
@@ -136,6 +140,9 @@ export const rejectingRequest = async (req: Request, res: Response) => {
 
   const user = await User.findById(userId);
 
+  await redis.cacheDel(`user:${userId}:incoming:requests`);
+  await redis.cacheDel(`user:${rejectedRequest.requester}:sent:requests`);
+
   // Send via Socket io
   const receiverSocketId = getReceiversSocketId(
     String(rejectedRequest.requester),
@@ -167,6 +174,9 @@ export const cancelRequest = async (req: Request, res: Response) => {
   if (!canceledRequest) {
     throw new NotFoundError("Request not found or already processed");
   }
+
+  await redis.cacheDel(`user:${userId}:sent:requests`);
+  await redis.cacheDel(`user:${canceledRequest.recipient}:incoming:requests`);
 
   // Send via Socket io
   const receiverSocketId = getReceiversSocketId(
@@ -209,6 +219,12 @@ export const getAllFriends = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   if (!userId) throw new UnauthorizedError("User not authenticated");
 
+  const cached = await redis.cacheGet(`user:${userId}:friends`);
+  if (cached) {
+    console.log("Cache Hit -> friend list");
+    return success(res, cached);
+  }
+
   const friends = await Friend.find({
     status: "accepted",
     $or: [{ requester: userId }, { recipient: userId }],
@@ -222,6 +238,8 @@ export const getAllFriends = async (req: Request, res: Response) => {
     return isRequester ? f.recipient : f.requester;
   });
 
+  await redis.cacheSet(`user:${userId}:friends`, friendUsers, 300);
+
   success(res, friendUsers);
 };
 
@@ -230,10 +248,19 @@ export const sentRequests = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   if (!userId) throw new UnauthorizedError("User not authenticated");
 
+  const cached = await redis.cacheGet(`user:${userId}:sent:requests`);
+  if (cached) {
+    console.log("Cache Hit -> user:sent:requests");
+    return success(res, cached);
+  }
+
   const sentRequests = await Friend.find({
     requester: userId,
     status: "pending",
   }).populate("recipient", "fullName profilePic email lastSeen createdAt");
+
+  // Set the cache
+  await redis.cacheSet(`user:${userId}:sent:requests`, sentRequests, 300);
 
   success(res, sentRequests);
 };
@@ -243,10 +270,23 @@ export const incomingRequests = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   if (!userId) throw new UnauthorizedError("User not authenticated");
 
+  const cached = await redis.cacheGet(`user:${userId}:incoming:requests`);
+  if (cached) {
+    console.log("Cache Hit -> user:incoming:requests");
+    return success(res, cached);
+  }
+
   const pendingRequests = await Friend.find({
     recipient: userId,
     status: "pending",
   }).populate("requester", "fullName profilePic email lastSeen createdAt");
+
+  // Set the cache
+  await redis.cacheSet(
+    `user:${userId}:incoming:requests`,
+    pendingRequests,
+    300,
+  );
 
   success(res, pendingRequests);
 };

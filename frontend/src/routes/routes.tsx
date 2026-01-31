@@ -11,6 +11,7 @@ import IncomingRequestsComponent from "@/components/IncomingRequestsComponent";
 import SentRequestsComponent from "@/components/SentRequestsComponent";
 import ChatList from "@/components/ChatList";
 import FriendList from "@/components/FriendList";
+import AboutPage from "@/pages/AboutPage";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
             element: <SentRequestsComponent />,
           },
         ],
+      },
+      {
+        path: "/aboutPage",
+        element: <AboutPage />,
       },
     ],
   },

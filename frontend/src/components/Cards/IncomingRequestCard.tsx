@@ -28,6 +28,7 @@ const IncomingRequestCard = ({ cardProps }: Props) => {
           <ItemMedia>
             <Avatar className="size-10">
               <AvatarImage
+                className="object-cover"
                 src={cardProps.requester.profilePic || userProfileAlter}
               />
               <AvatarFallback>ER</AvatarFallback>
