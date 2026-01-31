@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   Item,
   ItemContent,
@@ -6,6 +6,8 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+
+import userProfileAlter from "../assets/userProfile.png";
 
 interface Props {
   name: string | undefined;
@@ -15,11 +17,13 @@ interface Props {
 const ChatHeader = ({ name, profilePic }: Props) => {
   return (
     <div className="flex w-full flex-col gap-6 sticky">
-      <Item variant="muted">
+      <Item variant="muted" className="rounded-none">
         <ItemMedia>
-          <Avatar className="size-12 border-2 border-gray-400/50">
-            <AvatarImage src={profilePic || "https://github.com/person.png"} />
-            <AvatarFallback>JA</AvatarFallback>
+          <Avatar className="size-12 border-2 border-gray-400">
+            <AvatarImage
+              className="object-cover"
+              src={profilePic || userProfileAlter}
+            />
           </Avatar>
         </ItemMedia>
         <ItemContent>

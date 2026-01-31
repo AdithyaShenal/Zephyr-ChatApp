@@ -6,7 +6,7 @@ import router from "./routes/routes.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,5 +14,5 @@ createRoot(document.getElementById("root")!).render(
       <Toaster position="top-center" />
       <RouterProvider router={router} />
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );

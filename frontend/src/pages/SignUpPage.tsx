@@ -16,6 +16,10 @@ import { UserPen } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import useSignUp from "@/hooks/useSignUp";
 
+import { useLottie } from "lottie-react";
+import SignipAnimation from "../assets/Video Chat.json";
+import WhatsappBg from "../assets/whatsapp.png";
+
 const schema = z.object({
   fullName: z.string().min(1, "Please enter full name"),
   email: z.email("Please enter valid email"),
@@ -40,9 +44,43 @@ const SignUpPage = () => {
     mutate(data);
   };
 
+  const options = {
+    animationData: SignipAnimation,
+    loop: true,
+  };
+
+  const { View } = useLottie(options);
+
   return (
     <div className="grid lg:grid-cols-2 min-h-screen">
-      <div className="flex flex-col justify-center items-center p-10">
+      <div className="relative z-10 rounded-md p-10 shadow-2xl flex flex-col items-center">
+        {/* Fixed the typo here */}
+        <div className="text-2xl font-bold">Ready to dive in?</div>
+
+        {/* Animation */}
+        <div className="w-[450px]">{View}</div>
+
+        {/* Brand text */}
+        <h1 className="mt-6 text-4xl racing-sans font-bold tracking-wide text-black">
+          Zephyr
+        </h1>
+
+        {/* Tagline */}
+        <p className="mt-2 text-sm text-black text-center max-w-xs">
+          Where speed meets simplicity. Experience a lighter way to stay
+          connected.
+        </p>
+      </div>
+
+      <div
+        className="flex flex-col justify-center items-center p-10"
+        style={{
+          // This creates a white "wash" at 90% opacity over the image
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 1)), url(${WhatsappBg})`,
+          backgroundRepeat: "",
+          backgroundSize: "", // Adjust size to your liking
+        }}
+      >
         <div className="grid w-full max-w-sm gap-4">
           <div></div>
 
@@ -135,8 +173,6 @@ const SignUpPage = () => {
           </div>
         </div>
       </div>
-
-      <div className="hidden lg:block bg-gray-100 text-3xl">WindTalk</div>
     </div>
   );
 };

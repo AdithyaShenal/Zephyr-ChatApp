@@ -2,6 +2,10 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useLottie } from "lottie-react";
+import LogingAnimation from "../assets/Online Chat.json";
+import WhatsappBg from "../assets/whatsapp.png";
+
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -39,9 +43,24 @@ const LoginPage = () => {
     login(data);
   };
 
+  const options = {
+    animationData: LogingAnimation,
+    loop: true,
+  };
+
+  const { View } = useLottie(options);
+
   return (
     <div className="grid lg:grid-cols-2 min-h-screen">
-      <div className="flex flex-col justify-center items-center p-10">
+      <div
+        className="flex flex-col justify-center items-center p-10"
+        style={{
+          // This creates a white "wash" at 90% opacity over the image
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 1)), url(${WhatsappBg})`,
+          backgroundRepeat: "",
+          backgroundSize: "", // Adjust size to your liking
+        }}
+      >
         <div className="grid w-full max-w-sm gap-4">
           <div></div>
 
@@ -49,7 +68,6 @@ const LoginPage = () => {
             <div className="mb-12 flex flex-col justify-center items-center">
               <LucideLogIn className="bg-black/5 size-10 p-2 rounded-lg mb-2" />
               <p className="font-semibold text-lg">Log in</p>
-              <p className="text-sm text-gray-500">Let's whisper to wind!</p>
             </div>
 
             {isError && (
@@ -68,7 +86,7 @@ const LoginPage = () => {
                       {...register("email")}
                       id="email"
                       type="email"
-                      placeholder="adithya"
+                      placeholder="eg:- adithya@gmail.com"
                     />
                     {errors.email && (
                       <FieldDescription className="text-red-500 text-xs font-semibold">
@@ -121,7 +139,20 @@ const LoginPage = () => {
         </div>
       </div>
 
-      <div className="hidden lg:block bg-gray-100 text-3xl">WindTalk</div>
+      <div className="relative z-10 rounded-3xl p-10 shadow-2xl flex flex-col items-center overflow-hidden">
+        <div className="text-2xl font-bold">Welcome back!</div>
+
+        <div className="w-[450px]">{View}</div>
+
+        <h1 className="mt-6 text-4xl racing-sans font-bold tracking-wide text-black">
+          Zephyr
+        </h1>
+
+        <p className="mt-2 text-sm text-black text-center max-w-xs">
+          Drift back into the conversation. Fast, fluid messaging for the modern
+          world.
+        </p>
+      </div>
     </div>
   );
 };

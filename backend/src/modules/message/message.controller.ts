@@ -7,6 +7,7 @@ import { Types } from "mongoose";
 import cloudinary from "../../utils/cloudinaryClient.js";
 import { getReceiversSocketId, io } from "../../lib/socket.js";
 import Conversation from "../conversations/conversation.model.js";
+import { MessagesProducer } from "../../lib/queues/messages.producer.js";
 
 export const getUsersForSidebar = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
@@ -71,39 +72,19 @@ export const sendMessage = async (req: Request, res: Response) => {
     io.to(receiverSocketId).emit("newMessage", newMessage);
   }
 
-  // For this use Job queue -----------------------
-  // RECEIVER conversation (unread)
-  await Conversation.findOneAndUpdate(
-    {
-      userId: receiverId,
-      chatUserId: userId,
-    },
-    {
-      $set: {
-        lastMessage: text,
-        visited: false,
-        time: Date.now(),
-      },
-    },
-    { upsert: true }
-  );
+  // RECEIVER conversation (unread) - Queued
+  await MessagesProducer.updateUnread({
+    userId: receiverId,
+    chatUserId: userId,
+    text: text,
+  });
 
-  // SENDER conversation (already read)
-  await Conversation.findOneAndUpdate(
-    {
-      userId: userId,
-      chatUserId: receiverId,
-    },
-    {
-      $set: {
-        lastMessage: text,
-        visited: true,
-        time: Date.now(),
-      },
-    },
-    { upsert: true }
-  );
-  // ----------------------------------------------
+  // SENDER conversation (already read) - Queued
+  await MessagesProducer.updateUnread({
+    userId: userId,
+    chatUserId: receiverId,
+    text: text,
+  });
 
   success(res, newMessage);
 };

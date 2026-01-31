@@ -7,6 +7,10 @@ import ProfilePage from "@/pages/ProfilePage";
 import SettingsPage from "@/pages/SettingsPage";
 import LoginPage from "@/pages/LoginPage";
 import FindPeople from "@/pages/FindPeople";
+import IncomingRequestsComponent from "@/components/IncomingRequestsComponent";
+import SentRequestsComponent from "@/components/SentRequestsComponent";
+import ChatList from "@/components/ChatList";
+import FriendList from "@/components/FriendList";
 
 const router = createBrowserRouter([
   {
@@ -27,8 +31,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/homePage",
-        index: true,
         element: <HomePage />,
+        children: [
+          {
+            index: true,
+            element: <ChatList />,
+          },
+          {
+            path: "friendList",
+            element: <FriendList />,
+          },
+        ],
       },
       {
         path: "/profilePage",
@@ -41,6 +54,16 @@ const router = createBrowserRouter([
       {
         path: "/people",
         element: <FindPeople />,
+        children: [
+          {
+            index: true,
+            element: <IncomingRequestsComponent />,
+          },
+          {
+            path: "sentRequests",
+            element: <SentRequestsComponent />,
+          },
+        ],
       },
     ],
   },

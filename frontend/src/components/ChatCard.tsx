@@ -10,6 +10,8 @@ import {
 import { Badge } from "./ui/badge";
 import { Mail } from "lucide-react";
 
+import userProfileAlter from "../assets/userProfile.png";
+
 interface Props {
   name: string;
   profilePic: string | null | undefined;
@@ -24,9 +26,10 @@ const ChatCard = ({ name, profilePic, lastMessage, visited, time }: Props) => {
       <div className="flex w-full max-w-lg flex-col gap-6 cursor-pointer ">
         <Item variant="outline" className="hover:bg-gray-200">
           <ItemMedia>
-            <Avatar className="size-10">
+            <Avatar className="size-10 border border-black/20">
               <AvatarImage
-                src={profilePic || "https://github.com/person.png"}
+                className="object-cover"
+                src={profilePic || userProfileAlter}
               />
               <AvatarFallback>JA</AvatarFallback>
             </Avatar>
