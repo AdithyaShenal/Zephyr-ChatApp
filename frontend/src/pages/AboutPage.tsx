@@ -652,7 +652,7 @@ const AboutPage = () => {
           </div>
 
           {/* Features Highlight */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg p-8 text-white">
+          <div className="bg-linear-to-r from-blue-500 to-blue-600 rounded-lg shadow-lg p-8 text-white">
             <h2 className="text-2xl font-semibold mb-4">Why This Project?</h2>
             <p className="leading-relaxed mb-4">
               Zephyr showcases advanced full-stack development skills,
