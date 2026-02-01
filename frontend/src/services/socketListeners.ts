@@ -23,7 +23,7 @@ export const setupSocketListeners = (socket: Socket) => {
   console.log("Setting up socket listeners...");
 
   socket.onAny((eventName, ...args) => {
-    console.log(`📨 [${eventName}]`, args);
+    console.log(`[${eventName}]`, args);
   });
 
   // New Message Handler

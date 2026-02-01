@@ -12,13 +12,13 @@ import error from "./middleware/error.js";
 import morgan from "morgan";
 import { app, server } from "./lib/socket.js";
 
-import { env } from "../src/utils/env.js";
+import { env } from "./utils/env.js";
 import dotenv from "dotenv";
 import { initRedis } from "./lib/redis.js";
 dotenv.config();
 
 // Worker
-import "../src/lib/worker/messages.worker.js";
+import "./lib/worker/messages.worker.js";
 
 // Database Connection
 mongoose

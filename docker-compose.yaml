@@ -1,0 +1,36 @@
+services:
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - api
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    restart: unless-stopped
+
+volumes:
+  redis-data:

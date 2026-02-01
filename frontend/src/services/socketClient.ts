@@ -1,8 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { resetListeners } from "./socketListeners";
 
-const BASE_URL = "http://localhost:5001";
-
 let socket: Socket | null = null;
 
 export const connectSocket = (userId: string) => {
@@ -16,10 +14,11 @@ export const connectSocket = (userId: string) => {
   }
 
   console.log("Creating socket connection");
-  socket = io(BASE_URL, {
+  socket = io({
+    path: "/socket.io",
     query: { userId },
+    transports: ["websocket", "polling"],
   });
-
   socket.on("connect", () => {
     console.log("Socket connected:", socket?.id);
   });

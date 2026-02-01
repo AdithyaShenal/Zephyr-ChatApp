@@ -5,9 +5,9 @@
   "main": "src/app.ts",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "start": "tsx src/app.ts",
+    "start": "node dist/app.js",
     "build": "tsc",
-    "prod": "node dist/app.js"
+    "prod": "npm run start"
   },
   "keywords": [],
   "author": "",
