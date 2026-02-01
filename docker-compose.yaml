@@ -7,9 +7,7 @@ services:
 
   nginx:
     restart: always
-    build:
-      dockerfile: Dockerfile
-      context: ./nginx
+    image: adithyashenal/zephyr-nginx
     ports:
       - "8080:80"
     depends_on:
@@ -17,9 +15,7 @@ services:
       - api
 
   api:
-    build:
-      dockerfile: Dockerfile
-      context: ./backend
+    image: adithyashenal/zephyr-api
     restart: unless-stopped
     env_file:
       - .env
@@ -27,9 +23,7 @@ services:
       - redis
 
   frontend:
-    build:
-      dockerfile: Dockerfile
-      context: ./frontend
+    image: adithyashenal/zephyr-frontend
     restart: unless-stopped
 
 volumes:
