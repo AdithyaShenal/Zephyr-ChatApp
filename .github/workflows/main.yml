@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd ~/milk-flow-production
+            cd ~/Zephyr-ChatApp
             git pull origin main
             docker compose pull
             docker compose up -d
