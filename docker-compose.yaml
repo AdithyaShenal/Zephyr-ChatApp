@@ -9,7 +9,7 @@ services:
     restart: always
     image: adithyashenal/zephyr-nginx
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - frontend
       - api

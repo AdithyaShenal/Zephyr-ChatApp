@@ -27,3 +27,19 @@ jobs:
           docker push adithyashenal/zephyr-frontend
           docker push adithyashenal/zephyr-nginx
           docker push adithyashenal/zephyr-api
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to DigitalOcean via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd ~/milk-flow-production
+            git pull origin main
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
