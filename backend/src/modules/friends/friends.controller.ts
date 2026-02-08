@@ -189,17 +189,18 @@ export const cancelRequest = async (req: Request, res: Response) => {
   success(res, canceledRequest);
 };
 
-// Get all Mutual Friends (Suggestions) ---
+// Get all Mutual Friends (Suggestions) with search ---
 export const mutualFriends = async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   if (!userId) throw new UnauthorizedError("User not authenticated");
+
+  const searchQuery = req.query.search as string;
 
   const relations = await Friend.find({
     $or: [{ requester: userId }, { recipient: userId }],
   });
 
   const excludedUserIds = new Set<string>();
-
   excludedUserIds.add(String(userId));
 
   relations.forEach((rel) => {
@@ -207,9 +208,22 @@ export const mutualFriends = async (req: Request, res: Response) => {
     excludedUserIds.add(String(rel.recipient));
   });
 
-  const people = await User.find({
+  // Build query with search
+  const query: any = {
     _id: { $nin: Array.from(excludedUserIds) },
-  }).select("_id fullName profilePic email lastSeen createdAt");
+  };
+
+  // Add search filter if provided
+  if (searchQuery && searchQuery.trim()) {
+    query.$or = [
+      { fullName: { $regex: searchQuery.trim(), $options: "i" } },
+      { email: { $regex: searchQuery.trim(), $options: "i" } },
+    ];
+  }
+
+  const people = await User.find(query).select(
+    "_id fullName profilePic email lastSeen createdAt",
+  );
 
   success(res, people);
 };

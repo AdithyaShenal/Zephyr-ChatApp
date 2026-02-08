@@ -12,11 +12,12 @@ export interface PeopleProps {
   lastSeen: string;
 }
 
-const useGetPeople = () => {
+const useGetPeople = (searchQuery?: string) => {
   return useQuery<PeopleProps[], AxiosError<ApiError>>({
-    queryKey: ["people"],
+    queryKey: ["people", searchQuery],
     queryFn: async () => {
-      const res = await api.get("/friends/mutual");
+      const params = searchQuery ? { search: searchQuery } : {};
+      const res = await api.get("/friends/mutual", { params });
       return res.data.result;
     },
   });

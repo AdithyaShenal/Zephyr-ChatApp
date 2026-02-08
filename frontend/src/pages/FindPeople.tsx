@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Inbox, Send } from "lucide-react";
+import { ArrowLeft, Inbox, Send, Search as SearchIcon, X } from "lucide-react";
 
 import PeopleCard from "@/components/PeopleCard";
 import useGetPeople from "@/hooks/useGetPeople";
@@ -17,10 +17,25 @@ import { useState } from "react";
 
 const FindPeople = () => {
   const navigate = useNavigate();
-  const { data: people, isLoading, isError, error } = useGetPeople();
 
   // For mobile view toggle
   const [showRequestsOnMobile, setShowRequestsOnMobile] = useState(false);
+
+  // Search state
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: people, isLoading, isError, error } = useGetPeople(searchQuery);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+  };
 
   return (
     <>
@@ -31,14 +46,31 @@ const FindPeople = () => {
           <div className="flex flex-col py-2 px-2 h-full overflow-hidden">
             <div className="flex flex-col gap-2 mb-3 shrink-0">
               <p className="font-semibold text-lg px-2">Find People</p>
-              <InputGroup className="w-full">
-                <InputGroupInput placeholder="Type to search..." />
-                <InputGroupAddon align="inline-end">
-                  <InputGroupButton variant="secondary">
-                    Search
-                  </InputGroupButton>
-                </InputGroupAddon>
-              </InputGroup>
+              <form onSubmit={handleSearch}>
+                <InputGroup className="w-full">
+                  <InputGroupInput
+                    placeholder="Search by name or email..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    {searchInput && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={handleClearSearch}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <InputGroupButton variant="secondary" type="submit">
+                      <SearchIcon className="h-4 w-4" />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+              </form>
 
               {/* Mobile Requests Button */}
               <div className="grid grid-cols-2 gap-2">
@@ -68,12 +100,20 @@ const FindPeople = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto">
+              {searchQuery && (
+                <div className="px-2 py-1 mb-2 text-sm text-muted-foreground">
+                  Searching for:{" "}
+                  <span className="font-medium">{searchQuery}</span>
+                </div>
+              )}
+
               {isError && (
                 <ErrorCard
                   errorDetails={error.response?.data.message}
                   errorTitle={error.message}
                 />
               )}
+
               {isLoading &&
                 Array.from({ length: 5 }).map((_, index) => (
                   <div
@@ -89,6 +129,26 @@ const FindPeople = () => {
                     </div>
                   </div>
                 ))}
+
+              {!isLoading && people?.length === 0 && searchQuery && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>No people found matching "{searchQuery}"</p>
+                  <Button
+                    variant="link"
+                    className="mt-2"
+                    onClick={handleClearSearch}
+                  >
+                    Clear search
+                  </Button>
+                </div>
+              )}
+
+              {!isLoading && people?.length === 0 && !searchQuery && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>No people to show</p>
+                </div>
+              )}
+
               {people?.map((person) => (
                 <div key={person._id}>
                   <PeopleCard peopleProps={person} />
@@ -143,21 +203,48 @@ const FindPeople = () => {
         <div className="flex flex-col py-2 px-2 border-r h-full overflow-hidden">
           <div className="flex justify-between items-center gap-2 mb-2 shrink-0">
             <p className="font-semibold p-2 whitespace-nowrap">Find People</p>
-            <InputGroup className="w-full">
-              <InputGroupInput placeholder="Type to search..." />
-              <InputGroupAddon align="inline-end">
-                <InputGroupButton variant="secondary">Search</InputGroupButton>
-              </InputGroupAddon>
-            </InputGroup>
+            <form onSubmit={handleSearch} className="w-full">
+              <InputGroup className="w-full">
+                <InputGroupInput
+                  placeholder="Search by name or email..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <InputGroupAddon align="inline-end">
+                  {searchInput && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={handleClearSearch}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <InputGroupButton variant="secondary" type="submit">
+                    Search
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+            </form>
           </div>
 
           <div className="flex-1 overflow-y-auto pr-1">
+            {searchQuery && (
+              <div className="px-2 py-1 mb-2 text-sm text-muted-foreground">
+                Searching for:{" "}
+                <span className="font-medium">{searchQuery}</span>
+              </div>
+            )}
+
             {isError && (
               <ErrorCard
                 errorDetails={error.response?.data.message}
                 errorTitle={error.message}
               />
             )}
+
             {isLoading &&
               Array.from({ length: 5 }).map((_, index) => (
                 <div
@@ -173,6 +260,26 @@ const FindPeople = () => {
                   </div>
                 </div>
               ))}
+
+            {!isLoading && people?.length === 0 && searchQuery && (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No people found matching "{searchQuery}"</p>
+                <Button
+                  variant="link"
+                  className="mt-2"
+                  onClick={handleClearSearch}
+                >
+                  Clear search
+                </Button>
+              </div>
+            )}
+
+            {!isLoading && people?.length === 0 && !searchQuery && (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No people to show</p>
+              </div>
+            )}
+
             {people?.map((person) => (
               <div key={person._id}>
                 <PeopleCard peopleProps={person} />
