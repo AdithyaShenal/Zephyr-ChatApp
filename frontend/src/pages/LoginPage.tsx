@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useLottie } from "lottie-react";
 import LogingAnimation from "../assets/Online Chat.json";
 import WhatsappBg from "../assets/whatsapp.png";

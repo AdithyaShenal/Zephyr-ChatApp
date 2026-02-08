@@ -1,18 +1,10 @@
-import { CircleUserIcon, LogOut, UserPen, Wind } from "lucide-react";
+import { LogOut, UserPen, Wind, Menu, Home, Users } from "lucide-react";
 import { Button } from "../ui/button";
 import useLogout from "@/hooks/useLogout";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import userProfileAlter from "../../assets/userProfile.png";
-// import { useTheme } from "../Theme/theme-provider";
-// import { Moon, Sun } from "lucide-react";
-
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 import {
   Dialog,
@@ -36,16 +28,31 @@ import {
 } from "@/components/ui/menubar";
 import { HelpCircleIcon } from "lucide-react";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
+
 function NavBar() {
   const { mutate: logOut } = useLogout();
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  // const { setTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
+  const handleLogout = () => {
+    logOut();
+    setIsLogoutDialogOpen(false);
+    setIsMenuOpen(false);
+  };
 
   return (
     <>
       {/* Desktop Nav */}
-
       <nav className="hidden h-14 md:flex justify-between items-center px-4 border-b">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -78,27 +85,6 @@ function NavBar() {
 
         <div className="flex items-center gap-4">
           <Dialog>
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  System
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-
             <div className="flex gap-2 justify-center items-center border p-2 rounded-md">
               <p className="font-bold text-xs">Online</p>
               <div className="h-2 w-2 bg-green-500 rounded-full"></div>
@@ -107,7 +93,7 @@ function NavBar() {
             <Menubar className="border-none bg-transparent">
               <MenubarMenu>
                 <MenubarTrigger className="p-0 bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">
-                  <div className="border-3  rounded-full border-black/30 hover:border-black/40 transition-colors cursor-pointer">
+                  <div className="border-3 rounded-full border-black/30 hover:border-black/40 transition-colors cursor-pointer">
                     <img
                       src={user.profilePic || userProfileAlter}
                       alt="profile picture"
@@ -138,49 +124,163 @@ function NavBar() {
               </MenubarMenu>
             </Menubar>
 
-            <form>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Log out</DialogTitle>
-                  <DialogDescription>
-                    You’ll need to sign in again to access your account.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button
-                    variant="destructive"
-                    type="submit"
-                    onClick={() => logOut()}
-                  >
-                    Log out
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Log out</DialogTitle>
+                <DialogDescription>
+                  You'll need to sign in again to access your account.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  type="submit"
+                  onClick={() => logOut()}
+                >
+                  Log out
+                </Button>
+              </DialogFooter>
+            </DialogContent>
           </Dialog>
         </div>
       </nav>
 
       {/* Mobile Nav */}
-      <nav className="h-10 md:hidden flex justify-between items-center p-2 shadow-sm">
-        <div>
-          <Button size="sm" variant="outline">
-            -
-          </Button>
+      <nav className="h-14 md:hidden flex justify-between items-center px-4 border-b bg-background">
+        <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+          <SheetTrigger asChild>
+            <Button size="icon" variant="ghost">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[280px] p-0">
+            <SheetHeader className="p-6 pb-4 border-b">
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.profilePic || userProfileAlter}
+                  alt="profile picture"
+                  className="size-12 rounded-full object-cover border-2 border-black/10"
+                />
+                <div className="flex-1 min-w-0">
+                  <SheetTitle className="text-left text-base truncate">
+                    {user.fullName || "User"}
+                  </SheetTitle>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    <p className="text-xs text-muted-foreground">Online</p>
+                  </div>
+                </div>
+              </div>
+            </SheetHeader>
+
+            <div className="flex flex-col py-4">
+              <SheetClose asChild>
+                <NavLink
+                  to="/homePage"
+                  className={({ isActive }) =>
+                    `w-full ${isActive ? "bg-accent font-medium" : ""}`
+                  }
+                >
+                  <Button
+                    className="w-full justify-start gap-3 px-6 py-3"
+                    variant="ghost"
+                  >
+                    <Home className="h-5 w-5" />
+                    <span>Home</span>
+                  </Button>
+                </NavLink>
+              </SheetClose>
+
+              <SheetClose asChild>
+                <NavLink
+                  to="/people"
+                  className={({ isActive }) =>
+                    `w-full ${isActive ? "bg-accent font-medium" : ""}`
+                  }
+                >
+                  <Button
+                    className="w-full justify-start gap-3 px-6 py-3"
+                    variant="ghost"
+                  >
+                    <Users className="h-5 w-5" />
+                    <span>Find People</span>
+                  </Button>
+                </NavLink>
+              </SheetClose>
+
+              <div className="border-t my-4"></div>
+
+              <SheetClose asChild>
+                <Button
+                  onClick={() => navigate("/profilePage")}
+                  className="w-full justify-start gap-3 px-6 py-3"
+                  variant="ghost"
+                >
+                  <UserPen className="h-5 w-5" />
+                  <span>Profile</span>
+                </Button>
+              </SheetClose>
+
+              <SheetClose asChild>
+                <Button
+                  onClick={() => navigate("/aboutPage")}
+                  className="w-full justify-start gap-3 px-6 py-3"
+                  variant="ghost"
+                >
+                  <HelpCircleIcon className="h-5 w-5" />
+                  <span>About</span>
+                </Button>
+              </SheetClose>
+
+              <div className="border-t my-4"></div>
+
+              <SheetClose asChild>
+                <Button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setIsLogoutDialogOpen(true);
+                  }}
+                  className="w-full justify-start gap-3 px-6 py-3 text-red-500 hover:text-red-500 hover:bg-red-50"
+                  variant="ghost"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span>Log out</span>
+                </Button>
+              </SheetClose>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        <div className="flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+          <Wind className="h-5 w-5" />
+          <p className="font-semibold">Zephyr</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Wind />
-          <p>WindTalk</p>
-        </div>
-        <div>
-          <CircleUserIcon />
-        </div>
+
+        <div className="w-10"></div>
       </nav>
 
-      {/* Modal for confirm logout */}
+      {/* Mobile Logout Dialog */}
+      <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Log out</DialogTitle>
+            <DialogDescription>
+              You'll need to sign in again to access your account.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button variant="destructive" onClick={handleLogout}>
+              Log out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

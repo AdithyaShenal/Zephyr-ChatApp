@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 interface ChatUserStore {
   chatUser: FriendProps | null;
-  setChatUser: (user: FriendProps) => void;
+  setChatUser: (user: FriendProps | null) => void;
   resetChatUser: () => void;
 }
 

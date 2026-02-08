@@ -56,7 +56,7 @@ const ChatComponent = ({ userProps }: Props) => {
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Header */}
-      <div className="shrink-0 border-b">
+      <div className="shrink-0 border-b hidden md:visible">
         <ChatHeader
           name={userProps.fullName}
           profilePic={userProps.profilePic}
