@@ -86,7 +86,7 @@ const AboutPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-start">
+              {/* <div className="flex items-start">
                 <div className="shrink-0 h-6 w-6 rounded-full bg-black flex items-center justify-center mt-1">
                   <span className="text-white text-sm">✓</span>
                 </div>
@@ -100,7 +100,7 @@ const AboutPage = () => {
                     data updates in real-time.
                   </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex items-start">
                 <div className="shrink-0 h-6 w-6 rounded-full bg-black flex items-center justify-center mt-1">

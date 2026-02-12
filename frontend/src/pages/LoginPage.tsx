@@ -20,7 +20,7 @@ import { Spinner } from "@/components/ui/spinner";
 import useLogin from "@/hooks/useLogin";
 
 const schema = z.object({
-  email: z.email("Please enter valid email"),
+  email: z.string().email("Please enter valid email"),
   password: z.string().min(5, "Password must be at least 5 characters"),
 });
 
@@ -69,8 +69,58 @@ const LoginPage = () => {
               <p className="font-semibold text-lg">Log in</p>
             </div>
 
+            {/* Demo Credentials Banner */}
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start gap-2">
+                <div className="text-xl mt-0.5 flex-shrink-0 animate-wave">
+                  👋
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-blue-900 mb-1.5">
+                    Demo Account
+                  </p>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <span className="text-blue-800 font-medium w-16">
+                        Email:
+                      </span>
+                      <code className="px-1.5 py-0.5 bg-white rounded text-blue-900 font-mono text-xs">
+                        washenal55@gmail.com
+                      </code>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <span className="text-blue-800 font-medium w-16">
+                        Password:
+                      </span>
+                      <code className="px-1.5 py-0.5 bg-white rounded text-blue-900 font-mono text-xs">
+                        12345
+                      </code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <style>{`
+              @keyframes wave {
+                0% { transform: rotate(0deg); }
+                10% { transform: rotate(14deg); }
+                20% { transform: rotate(-8deg); }
+                30% { transform: rotate(14deg); }
+                40% { transform: rotate(-4deg); }
+                50% { transform: rotate(10deg); }
+                60% { transform: rotate(0deg); }
+                100% { transform: rotate(0deg); }
+              }
+              .animate-wave {
+                animation: wave 2s ease-in-out infinite;
+                transform-origin: 70% 70%;
+                display: inline-block;
+              }
+            `}</style>
+
             {isError && (
-              <p className="text-center text-sm text-red-500 font-semibold">
+              <p className="text-center text-sm text-red-500 font-semibold mb-4">
                 {error.response?.data.message}
               </p>
             )}
