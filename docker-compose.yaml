@@ -5,41 +5,11 @@ services:
     volumes:
       - redis-data:/data
 
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik
-    restart: always
-    # Move the versioning here. Command flags always beat Env vars.
-    command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      # This flag forces the API version in Traefik v3
-      - "--providers.docker.version=1.44"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=washenal55@gmail.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    # Remove the environment section entirely to stop the confusion
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-
   nginx:
     restart: always
     image: adithyashenal/zephyr-nginx
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.zephyr.rule=Host(`zephyr.adithyashenal.me`)"
-      - "traefik.http.routers.zephyr.entrypoints=websecure"
-      - "traefik.http.routers.zephyr.tls.certresolver=myresolver"
+    ports:
+      - "80:80"
     depends_on:
       - frontend
       - api
