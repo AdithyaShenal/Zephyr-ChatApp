@@ -10,13 +10,10 @@ services:
     container_name: traefik
     restart: always
     command:
-      # ADD THIS LINE - Forces the provider version
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      # FIX: Added the missing scheme line for the redirect
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
@@ -28,9 +25,7 @@ services:
       - "443:443"
     volumes:
       - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock" # Removed :ro to ensure no permission blocks
-    environment:
-      - DOCKER_API_VERSION=1.24
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
   nginx:
     restart: always
