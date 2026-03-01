@@ -5,9 +5,35 @@ services:
     volumes:
       - redis-data:/data
 
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: always
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=washenal55@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
   nginx:
     restart: always
     image: adithyashenal/zephyr-nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.zephyr.rule=Host(`zephyr.adithyashenal.me`)"
+      - "traefik.http.routers.zephyr.entrypoints=websecure"
+      - "traefik.http.routers.zephyr.tls.certresolver=myresolver"
     ports:
       - "80:80"
     depends_on:
