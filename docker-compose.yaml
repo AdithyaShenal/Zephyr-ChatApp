@@ -12,6 +12,7 @@ services:
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.httpClientTimeout=300s"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
@@ -25,7 +26,7 @@ services:
       - "443:443"
     volumes:
       - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   nginx:
     restart: always
